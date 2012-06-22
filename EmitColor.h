@@ -1,6 +1,6 @@
-int REDPin        = 6;    // RED pin of the LED to PWM pin 11
-int GREENPin      = 5;    // GREEN pin of the LED to PWM pin 10
-int BLUEPin       = 3;    // BLUE pin of the LED to PWM pin 9
+int REDPin        = 6;    // RED pin of the LED to PWM pin 6
+int GREENPin      = 5;    // GREEN pin of the LED to PWM pin 5
+int BLUEPin       = 3;    // BLUE pin of the LED to PWM pin 3
 
 
 void steadyRed() {

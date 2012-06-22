@@ -1,0 +1,21 @@
+To change the IP and MAC address of Eithernet Shild edit follwoing lines in Webduino_LED_Controller.ino 
+static uint8_t mac[] = { 0x90, 0xA2, 0xDA, 0x0D, 0x18, 0x48 };
+static uint8_t ip[]  = { 10, 0, 1, 12 };
+
+
+To change the port where webserver would listen to edit the following in Webduino_LED_Controller.ino
+WebServer webserver(PREFIX, 9889);
+
+
+To change the LED pin configuration edit following in EmitColor.h
+int REDPin        = 6;    // RED pin of the LED to PWM pin 6
+int GREENPin      = 5;    // GREEN pin of the LED to PWM pin 5
+int BLUEPin       = 3;    // BLUE pin of the LED to PWM pin 3
+
+
+To change the color of LED on Arduino, execute followings:
+% curl http://10.0.1.12:9889/set_light.html?red
+% curl http://10.0.1.12:9889/set_light.html?green
+% curl http://10.0.1.12:9889/set_light.html?blue
+% curl http://10.0.1.12:9889/set_light.html?yellow
+% curl http://10.0.1.12:9889/set_light.html?none
