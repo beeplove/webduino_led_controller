@@ -9,18 +9,21 @@
 static uint8_t mac[] = { 0x90, 0xA2, 0xDA, 0x0D, 0x18, 0x48 };
 static uint8_t ip[]  = { 10, 0, 1, 12 };
 
-P(title)    = "<html><head><title>Webduino LED Controller" VERSION_STRING "</title></head><body>\n";
+P(title)    = "<html><head><title>Webduino LED Controller v" VERSION_STRING "</title></head><body>\n";
 P(html_end) = "</body></html>";
 
 P(root_header) = "<h1>Webduino LED Controller</h1>";
 
+long previousMillis = 0;
+long interval = 250;
+int blink = 0;
 
-unsigned short int STEADY_RED = 1;
-unsigned short int STEADY_GREEN = 2;
-unsigned short int STEADY_BLUE = 3;
+unsigned short int STEADY_RED    = 1;
+unsigned short int STEADY_GREEN  = 2;
+unsigned short int STEADY_BLUE   = 3;
 unsigned short int STEADY_YELLOW = 4;
-unsigned short int BLINK_RED = 5;
-unsigned short int NONE = 0; 
+unsigned short int BLINK_RED     = 5;
+unsigned short int NONE          = 0; 
 
 unsigned short int emit = NONE;
 
@@ -50,22 +53,23 @@ void setLight(WebServer &server, WebServer::ConnectionType method, char *params,
   server.httpSuccess();
   
   if (tail_complete) {
-    if (strcmp(params, "red") == 0) emit = STEADY_RED;
-    if (strcmp(params, "green") == 0) emit = STEADY_GREEN;
-    if (strcmp(params, "blue") == 0) emit = STEADY_BLUE;
-    if (strcmp(params, "yellow") == 0) emit = STEADY_YELLOW;
+    /* Todo: refactor to use switch instead of multiple if */
+    if (strcmp(params, "red") == 0)       emit = STEADY_RED;
+    if (strcmp(params, "green") == 0)     emit = STEADY_GREEN;
+    if (strcmp(params, "blue") == 0)      emit = STEADY_BLUE;
+    if (strcmp(params, "yellow") == 0)    emit = STEADY_YELLOW;
     if (strcmp(params, "blink_red") == 0) emit = BLINK_RED;
 
-    if (strcmp(params, "none") == 0) emit = NONE;
+    if (strcmp(params, "none") == 0)      emit = NONE;
   }
 } 
 
 
 void setup()
 {
-  pinMode(REDPin, OUTPUT);
+  pinMode(REDPin,   OUTPUT);
   pinMode(GREENPin, OUTPUT);
-  pinMode(BLUEPin, OUTPUT);
+  pinMode(BLUEPin,  OUTPUT);
   Serial.begin(9600);  
   
   Ethernet.begin(mac, ip);
@@ -84,21 +88,29 @@ void loop()
   char buff[64];
   int len = 64;
 
+  unsigned long currentMillis = millis();
+
   /* process incoming connections one at a time forever */
   webserver.processConnection(buff, &len);
   
   /* Refactor to use switch instead of multiple if */
-  if (emit == NONE) none();
-  if (emit == STEADY_RED) steadyRed();
-  if (emit == STEADY_GREEN) steadyGreen();
-  if (emit == STEADY_BLUE) steadyBlue();
+  if (emit == NONE)          none();
+  if (emit == STEADY_RED)    steadyRed();
+  if (emit == STEADY_GREEN)  steadyGreen();
+  if (emit == STEADY_BLUE)   steadyBlue();
   if (emit == STEADY_YELLOW) steadyYellow();
   
-  // Todo: Not functional, use mills instead of dealy
   if (emit == BLINK_RED) {
-    steadyRed();
-    delay(1000);
-    none();
+    if (currentMillis - previousMillis > interval) {
+      previousMillis = currentMillis; 
+      if (blink == 0) {
+        blink = 1;
+        steadyRed();
+      } else {
+        blink = 0;
+        none();
+      }
+    }
   }
   
 }

@@ -19,3 +19,4 @@ To change the color of LED on Arduino, execute followings:
 % curl http://10.0.1.12:9889/set_light.html?blue
 % curl http://10.0.1.12:9889/set_light.html?yellow
 % curl http://10.0.1.12:9889/set_light.html?none
+% curl http://10.0.1.12:9889/set_light.html?blink_red
